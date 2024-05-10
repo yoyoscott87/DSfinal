@@ -18,3 +18,4 @@
 -  高溫警報  設計網頁
 -  [生成天氣預報圖](https://openweathermap.org/widgets-constructor)
 -  [氣壓圖](https://openweathermap.org/api/weathermaps)
+-  網頁 : 輸入格(想查詢之城市) 天氣預測圖，氣壓圖，開關燈按鈕
