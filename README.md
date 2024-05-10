@@ -16,4 +16,5 @@
 -  主程式放在[test2.py](期末/test2.py)，run下去能做判斷開關燈，拿天氣資訊
 -  天氣測試程式放在[weather.ipynb](期末/weather.ipynb)
 -  高溫警報  設計網頁
--  https://openweathermap.org/widgets-constructor
+-  [生成天氣預報圖](https://openweathermap.org/widgets-constructor)
+-  [氣壓圖](https://openweathermap.org/api/weathermaps)
