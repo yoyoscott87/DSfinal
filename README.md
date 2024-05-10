@@ -9,3 +9,8 @@
 
 
 - [weather.ipynb](期末/weather.ipynb)是在測試用API獲取某地資料
+
+2024/05/10
+
+
+-主程式放在[test2.py](期末/test2.py)，run下去能做判斷開關燈，拿天氣資訊
