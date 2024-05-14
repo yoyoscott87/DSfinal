@@ -1,106 +1,19 @@
-#獲得某地天氣資料後做判斷開關燈，先做著可以想想要不要用
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 import requests
-import time
-import os
-from dotenv import load_dotenv
-load_dotenv()
+import json
 
-credentials_file = os.getenv("CREDENTIALS_FILE")
-api_key = os.getenv("API_KEY")
-# 从文件中读取地点名称和经纬度信息
-def read_coordinates_from_file(file_path):
-    coordinates = {}
-    with open(file_path, 'r', encoding='utf-8') as file:
-        for line in file:
-            parts = line.strip().split(',')
-            place_name = parts[0]
-            latitude, longitude = map(float, parts[1:])
-            coordinates[place_name] = (latitude, longitude)
-    return coordinates
-
-def get_coordinates_by_location(location_name):
-    if location_name in locations:
-        return locations[location_name]
+def get_weather_data(api_key, latitude, longitude):
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={api_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
     else:
-        print("地點名稱無效")
+        print("Error:", response.status_code)
         return None
 
-def get_weather_by_coordinates(api_key, lat, lon):
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    return data
+api_key = "b55132e7d0d008aa945b18e4cd2f5a02"
+latitude = 35.689381
+longitude = 139.69181
+weather_data = get_weather_data(api_key, latitude, longitude)
 
-#判斷開關燈
-def control_air_conditioner(humidity):
-    try:
-        if humidity is not None:
-            weather_data = get_weather_by_coordinates(api_key, latitude, longitude)
-            if humidity > 60:
-                response_text_on = turn_16_on()  # 开启第 12 盏灯
-                control_air_conditioner_status = "On"
-                print(response_text_on)
-                print(weather_data["name"],"溫度 :", round(humidity,2), "%")
-                print("溫度超過20度，開啟除濕機")
-            else:
-                response_text_off = turn_16_off()  # 关闭第 12 盏灯
-                control_air_conditioner_status = "Off"
-                print(response_text_off)
-                print(weather_data["name"],"濕度 :", round(humidity,2), "%")
-                print("溫度低於20度，關閉除濕機")
-        else:
-            control_air_conditioner_status = "Unknown"
-        return control_air_conditioner_status
-    except Exception as e:
-        print("控制除濕機出錯：", e)
-        control_air_conditioner_status = "Error"
-        return control_air_conditioner_status
-
-
-def turn_16_on():
-    url = 'http://211.21.113.190:8155/api/webhook/-d2Qi-uvQnpb_KcVcp_Jm9iJK'
-    headers = {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4YWM0MDEzODIwNDU0MDE0ODdjNzIwZTc2ZDBmYzdjYSIsImlhdCI6MTY5ODgwNzExNSwiZXhwIjoyMDE0MTY3MTE1fQ.7KaCwPUcjAr_zne04qili2fwQO1QoWTPzsmV1v_LLIc'
-    }
-
-    response = requests.post(url, headers=headers)
-    return response.text
-
-def turn_16_off():
-    url = 'http://211.21.113.190:8155/api/webhook/-pAW1x-AJO9s-b9JXDm89Dp_P'
-    headers = {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4YWM0MDEzODIwNDU0MDE0ODdjNzIwZTc2ZDBmYzdjYSIsImlhdCI6MTY5ODgwNzExNSwiZXhwIjoyMDE0MTY3MTE1fQ.7KaCwPUcjAr_zne04qili2fwQO1QoWTPzsmV1v_LLIc'
-    }
-
-    response = requests.post(url, headers=headers)
-    return response.text
-
-def server():
-    while True:
-        try:
-            weather_data = get_weather_by_coordinates(api_key, latitude, longitude)
-            if weather_data is not None:
-                temperature_celsius = weather_data["main"]["humidity"]
-                air_conditioner_status = control_air_conditioner(temperature_celsius)
-
-                # 将数据写入 Google Sheets
-                sheet.append_row([weather_data["name"], f"{round(temperature_celsius,2)}%", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),air_conditioner_status])
-        except Exception as e:
-            print("Error:", e)
-        time.sleep(30)
-
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_file, scope)
-client = gspread.authorize(credentials)
-sheet = client.open("DSfinal").sheet1
-file_path = '經緯度參考.txt'
-locations = read_coordinates_from_file(file_path)
-location_name = "台中"
-latitude, longitude = get_coordinates_by_location(location_name)
-
-# 替换为你希望获取天气数据的地点的经纬度坐标
-#latitude = 34.6937249
-#longitude = 135.5022535
-server()
+if weather_data:
+    print(json.dumps(weather_data, indent=4))  # 打印原始的 JSON 数据
