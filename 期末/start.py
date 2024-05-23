@@ -1,4 +1,3 @@
-#獲得某地天氣資料後做判斷開關燈，先做著可以想想要不要用
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
@@ -106,6 +105,26 @@ def turn_12_off():
     response = requests.post(url, headers=headers)
     return response.text
 
+def turn_14_on():
+    url = 'http://211.21.113.190:8155/api/webhook/-lkvcCfPU2wOmNLvhDjrEKpkb'
+    headers = {
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4YWM0MDEzODIwNDU0MDE0ODdjNzIwZTc2ZDBmYzdjYSIsImlhdCI6MTY5ODgwNzExNSwiZXhwIjoyMDE0MTY3MTE1fQ.7KaCwPUcjAr_zne04qili2fwQO1QoWTPzsmV1v_LLIc'
+    }
+
+    response = requests.post(url, headers=headers)
+    return response.text
+
+# 14 off
+def turn_14_off():
+    url = 'http://211.21.113.190:8155/api/webhook/-jfyKgpRXg6fgI9IXNIy0GNSn'
+    headers = {
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4YWM0MDEzODIwNDU0MDE0ODdjNzIwZTc2ZDBmYzdjYSIsImlhdCI6MTY5ODgwNzExNSwiZXhwIjoyMDE0MTY3MTE1fQ.7KaCwPUcjAr_zne04qili2fwQO1QoWTPzsmV1v_LLIc'
+    }
+
+    response = requests.post(url, headers=headers)
+    return response.text
+
+
 def turn_16_on():
     url = 'http://211.21.113.190:8155/api/webhook/-d2Qi-uvQnpb_KcVcp_Jm9iJK'
     headers = {
@@ -124,7 +143,106 @@ def turn_16_off():
     response = requests.post(url, headers=headers)
     return response.text
 
+def get_air_by_coordinates(api_key, lat, lon):
+    url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}"
+    response = requests.get(url)
+    data = response.json()
+    return data
 
+def get_air_quality_index(component, value):
+    if component == 'so2':
+        if value <= 20:
+            return 0
+        elif value <= 80:
+            return 1
+        elif value <= 250:
+            return 2
+        elif value <= 350:
+            return 3
+        else:
+            return 4
+    elif component == 'no2':
+        if value <= 40:
+            return 0
+        elif value <= 70:
+            return 1
+        elif value <= 150:
+            return 2
+        elif value <= 200:
+            return 3
+        else:
+            return 4
+    elif component == 'pm10':
+        if value <= 20:
+            return 0
+        elif value <= 50:
+            return 1
+        elif value <= 100:
+            return 2
+        elif value <= 200:
+            return 3
+        else:
+            return 4
+    elif component == 'pm2_5':
+        if value <= 10:
+            return 0
+        elif value <= 25:
+            return 1
+        elif value <= 50:
+            return 2
+        elif value <= 75:
+            return 3
+        else:
+            return 4
+    elif component == 'o3':
+        if value <= 60:
+            return 0
+        elif value <= 100:
+            return 1
+        elif value <= 140:
+            return 2
+        elif value <= 180:
+            return 3
+        else:
+            return 4
+    elif component == 'co':
+        if value <= 4400:
+            return 0
+        elif value <= 9400:
+            return 1
+        elif value <= 12400:
+            return 2
+        elif value <= 15400:
+            return 3
+        else:
+            return 4
+    
+    else:
+        return 'Unknown'
+
+def map_score_to_level(score):
+    if score <= 1:
+        return "優秀"
+    elif score <= 2:
+        return "良好"
+    elif score <= 3:
+        return "一般"
+    else:
+        return "差"
+    
+def air_control(air_quality_level):
+    if air_quality_level == "優秀"or air_quality_level == "良好":
+        response_text_on = turn_14_on()  # 開啟空氣清新機
+        print("空氣品質良好，" + response_text_on)
+    
+
+    elif air_quality_level == "一般" or air_quality_level == "差":
+        response_text_off = turn_14_off()  # 關閉空氣清新機
+        print("空氣品質一般，" + response_text_off)
+    else:
+        print("未知空氣品質等級")
+                
+    
 def server():
     while True:
         try:
@@ -135,8 +253,23 @@ def server():
                 air_conditioner_status = control_air_conditioner(temperature_celsius)
                 control_dehumidifier_status = control_hum_conditioner(hum_celsius)
 
+                #空氣品質
+                air_data = get_air_by_coordinates(api_key, latitude, longitude)
+                components = air_data['list'][0]['components']
+
+                total_score = 0
+                for component, value in components.items():
+                    if component in weights:
+                        aqi_score = get_air_quality_index(component, value)
+                        total_score += aqi_score * weights[component]
+                
+                # 將評分映射到等級
+                air_quality_level = map_score_to_level(total_score)
+                print("空氣品質等級:", air_quality_level)
+
+
                 # 将数据写入 Google Sheets
-                sheet.append_row([weather_data["name"], f"{round(temperature_celsius,2)}\u2103",f"{round(hum_celsius,2)}%" ,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),air_conditioner_status,control_dehumidifier_status])
+                sheet.append_row([weather_data["name"], f"{round(temperature_celsius,2)}\u2103",f"{round(hum_celsius,2)}%" ,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),air_conditioner_status,control_dehumidifier_status, air_quality_level])
         except Exception as e:
             print("Error:", e)
         time.sleep(30)
@@ -147,8 +280,9 @@ client = gspread.authorize(credentials)
 sheet = client.open("DSfinal").sheet1
 file_path = '經緯度參考.txt'
 locations = read_coordinates_from_file(file_path)
-location_name = "洛杉磯"
+location_name = "新北"
 latitude, longitude = get_coordinates_by_location(location_name)
+weights = {'so2': 0.1, 'no2': 0.15, 'pm10': 0.2, 'pm2_5': 0.25, 'o3': 0.15, 'co': 0.15}
 
 #latitude = 51.5074
 #longitude = -0.1278
