@@ -1,30 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Dashboard</title>
+    <title>天氣儀表板</title>
     <link rel="stylesheet" href="DS.CSS">
 </head>
 <body>
     <div class="container">
         <h1>天氣預報網</h1>
-        <div class="input-group">
-            <input type="text" id="city-input" placeholder="输入城市">
-            <button id="search-button">查詢</button>
+        
+        <!-- 室內部分 -->
+        <div class="section indoor-section">
+            <h2>室內</h2>
+            <button class="button" id="ac-button">冷氣</button>
+            <button class="button" id="dehumidifier-button">除濕機</button>
         </div>
-        <div class="weather-info">
-            <h2 id="city-name"></h2>
-            <div id="current-weather">
-                <p>當前溫度: <span id="temperature"></span>°C</p>
-                <p>當前濕度: <span id="humidity"></span>%</p>
+        
+        <!-- 室外部分 -->
+        <div class="section outdoor-section">
+            <h2>室外</h2>
+            <div class="input-group">
+                <input type="text" id="city-input" placeholder="输入城市">
+                <button class="button" id="search-button">查詢</button>
             </div>
-            <div class="weather-charts">
-                <img id="weather-forecast" src="" alt="天氣預測圖">
-                <img id="pressure-chart" src="" alt="氣壓圖">
+            <div class="weather-info">
+                <h3 id="city-name"></h3>
+                <div id="current-weather">
+                    <p>當前溫度: <span id="temperature"></span>°C</p>
+                    <p>當前濕度: <span id="humidity"></span>%</p>
+                </div>
+                <p>空氣品質: <span id="air-quality"></span></p>
+                <div class="weather-charts">
+                    <img id="weather-forecast" src="" alt="天氣預測圖">
+                    <img id="pressure-chart" src="" alt="氣壓圖">
+                </div>
             </div>
         </div>
-        <button id="toggle-light">開關燈</button>
     </div>
 
     <script src="DS.Js"></script>
