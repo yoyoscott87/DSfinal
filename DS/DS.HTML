@@ -21,7 +21,7 @@
         <div class="section outdoor-section">
             <h2>室外</h2>
             <div class="input-group">
-                <input type="text" id="city-input" placeholder="输入城市">
+                <input type="text" id="city-input" placeholder="輸入城市名稱">
                 <button class="button" id="search-button">查詢</button>
             </div>
             <div class="weather-info">
@@ -32,13 +32,18 @@
                 </div>
                 <p>空氣品質: <span id="air-quality"></span></p>
                 <div class="weather-charts">
-                    <img id="weather-forecast" src="" alt="天氣預測圖">
-                    <img id="pressure-chart" src="" alt="氣壓圖">
+                    <h3 class="left">天氣預報圖</h3>
+                    <div id="openweathermap-widget-11" class="center"></div>
+                </div>
+                <div id="pressure-chart">
+                    <h3 class="left">氣壓圖</h3>
+                    <img id="pressure-chart-img" src="" alt="氣壓圖" class="center">
                 </div>
             </div>
         </div>
     </div>
 
+    <script src='//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/d3.min.js'></script>
     <script src="DS.Js"></script>
 </body>
 </html>
