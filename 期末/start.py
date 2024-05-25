@@ -272,7 +272,7 @@ def server():
                 sheet.append_row([weather_data["name"], f"{round(temperature_celsius,2)}\u2103",f"{round(hum_celsius,2)}%" ,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),air_conditioner_status,control_dehumidifier_status, air_quality_level])
         except Exception as e:
             print("Error:", e)
-        time.sleep(30)
+        time.sleep(600)
 
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_file, scope)

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <div id="chat-box"></div>
+    <form id="question-form">
+        <input type="text" id="question" name="question" placeholder="Ask your question...">
+        <button type="submit">Send</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#question-form').submit(function(event) {
+                event.preventDefault();
+                var question = $('#question').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/ask',
+                    data: {question: question},
+                    success: function(response) {
+                        $('#chat-box').append('<p><strong>You:</strong> ' + question + '</p>');
+                        $('#chat-box').append('<p><strong>Bot:</strong> ' + response.answer + '</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
