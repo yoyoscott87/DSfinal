@@ -272,7 +272,7 @@ def server():
                 sheet.append_row([weather_data["name"], f"{round(temperature_celsius,2)}\u2103",f"{round(hum_celsius,2)}%" ,time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),air_conditioner_status,control_dehumidifier_status, air_quality_level])
         except Exception as e:
             print("Error:", e)
-        time.sleep(600)
+        time.sleep(300)
 
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_file, scope)
@@ -280,7 +280,7 @@ client = gspread.authorize(credentials)
 sheet = client.open("DSfinal").sheet1
 file_path = '經緯度參考.txt'
 locations = read_coordinates_from_file(file_path)
-location_name = "新北"
+location_name = "東京"
 latitude, longitude = get_coordinates_by_location(location_name)
 weights = {'so2': 0.1, 'no2': 0.15, 'pm10': 0.2, 'pm2_5': 0.25, 'o3': 0.15, 'co': 0.15}
 
