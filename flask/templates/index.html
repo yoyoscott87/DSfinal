@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天氣儀錶板</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>天氣預報網</h1>
+        
+        <!-- 室內部分 -->
+        <div class="section indoor-section">
+            <h2>室內</h2>
+            <div class="buttons-container">
+                <button class="button" id="autoControlBtn">全自動</button>
+                <button class="button" id="toggleAirConditionerBtn">冷氣</button>
+                <button class="button" id="toggleDehumidifierBtn">除濕機</button>
+            </div>
+            <div>
+                <p>溫度：<span id="temperature">°C</span></p>
+                <p>濕度：<span id="humidity">%</span></p>
+                <p>冷氣：<span id="air-conditioner"></span></p>
+                <p>除濕機：<span id="dehumidifier"></span></p>
+            </div>
+        </div>
+
+        <!-- 室外部分 -->
+        <div class="section outdoor-section">
+            <h2>室外</h2>
+            <div class="input-group">
+                <input type="text" id="city-input" placeholder="輸入城市名稱">
+                <button class="button" id="search-button">查詢</button>
+            </div>
+            <div class="weather-info">
+                <p>天氣概況: <span id="weather"></span></p>
+                <p>當前溫度: <span id="loctemperature"></span></p>
+                <p>當前濕度: <span id="lochumidity"></span></p>
+                <p>空氣品質: <span id="air"></span></p>
+                <div class="weather-charts">
+                    <h3 class="left">天氣預報圖</h3>
+                    <div id="openweathermap-widget-11" class="center"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 聊天室部分 -->
+        <div class="container">
+            <h1>Chat Room</h1>
+            <div id="chat-box"></div>
+            <div class="input-group">
+                <form id="question-form">
+                    <input type="text" id="question" placeholder="請輸入問題">
+                    <button class="button" type="submit">送出</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src='//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/d3.min.js'></script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>
