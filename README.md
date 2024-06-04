@@ -32,7 +32,7 @@
 
 2024/06/04
 -  天氣資訊網期末demo
--  [網頁](templates/index.html)
+-  [網頁](flask/templates/index.html)  [JS](static/scripts.js)和[CSS](static/styles.css)
 -  [主程式](flask/AI.py)
 -  利用curl方式或的辦公室氣溫濕度，判斷之後使用curl控制燈泡代表家電
    
