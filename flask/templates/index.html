@@ -5,56 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>天氣儀錶板</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200..900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="header"></div>
+    <h1>天氣預報網</h1>
     <div class="container">
-        <h1>天氣預報網</h1>
-        
         <!-- 室內部分 -->
-        <div class="section indoor-section">
-            <h2>室內</h2>
-            <div class="buttons-container">
-                <button class="button" id="autoControlBtn">全自動</button>
-                <button class="button" id="toggleAirConditionerBtn">冷氣</button>
-                <button class="button" id="toggleDehumidifierBtn">除濕機</button>
-            </div>
-            <div>
-                <p>溫度：<span id="temperature">°C</span></p>
-                <p>濕度：<span id="humidity">%</span></p>
-                <p>冷氣：<span id="air-conditioner"></span></p>
-                <p>除濕機：<span id="dehumidifier"></span></p>
-            </div>
-        </div>
-
-        <!-- 室外部分 -->
-        <div class="section outdoor-section">
-            <h2>室外</h2>
-            <div class="input-group">
-                <input type="text" id="city-input" placeholder="輸入城市名稱">
-                <button class="button" id="search-button">查詢</button>
-            </div>
-            <div class="weather-info">
-                <p>天氣概況: <span id="weather"></span></p>
-                <p>當前溫度: <span id="loctemperature"></span></p>
-                <p>當前濕度: <span id="lochumidity"></span></p>
-                <p>空氣品質: <span id="air"></span></p>
-                <div class="weather-charts">
-                    <h3 class="left">天氣預報圖</h3>
-                    <div id="openweathermap-widget-11" class="center"></div>
+        <div class="left-top">
+            <h2>全自動</h2>
+            <div class="control-panel">
+                <label class="switch">
+                    <input type="checkbox" class="checkbox" id="autoControlBtn">
+                    <span class="slider"></span>
+                </label>
+                <div class="temperature-humidity">
+                    <h4>溫度：<span id="temperature">°C</span></h4>
+                    <h4>濕度：<span id="humidity">%</span></h4>
                 </div>
             </div>
         </div>
         
-        <!-- 聊天室部分 -->
-        <div class="container">
-            <h1>Chat Room</h1>
-            <div id="chat-box"></div>
+        <div class="left-bottom1">
+            <button class="button" id="toggleAirConditionerBtn">冷氣</button>
+            <h3>冷氣機：<span id="air-conditioner"></span></h3>
+        </div>
+        <div class="left-bottom2">
+            <button class="button" id="toggleDehumidifierBtn">除濕機</button>
+            <h3>除濕機：<span id="dehumidifier"></span></h3>
+        </div>   
+
+        <!-- 室外部分 -->
+        <div class="search">
             <div class="input-group">
-                <form id="question-form">
-                    <input type="text" id="question" placeholder="請輸入問題">
-                    <button class="button" type="submit">送出</button>
-                </form>
+                <input type="text" id="city-input" placeholder="輸入城市名稱">
+                <button class="button" id="search-button">查詢</button>
             </div>
+        </div>
+
+        <div class="weather-info1">
+            <img src="{{ url_for('static', filename='sunny.png') }}" alt="WIND" style="width: 30px; height: 30px;">
+            <h3>天氣概況: </h3><h6><span id="weather"></span></h6>
+        </div>
+        <div class="weather-info2">
+            <img src="{{ url_for('static', filename='temp.png') }}" alt="WIND" style="width: 30px; height: 30px;">
+            <h3>當前溫度: <span id="loctemperature"></span></h3>
+        </div>
+        
+        <div class="weather-info3">
+            <img src="{{ url_for('static', filename='water.png') }}" alt="WIND" style="width: 30px; height: 30px;">
+            <h3>當前濕度: <span id="lochumidity"></span></h3>
+        </div>
+        <div class="weather-info4">
+            <img src="{{ url_for('static', filename='ripple.png') }}" alt="WIND" style="width: 30px; height: 30px;">
+            <h3>空氣品質: <span id="air"></span></h3>
+        </div>
+        <div class="weather-charts">
+            <div id="openweathermap-widget-11" class="center"></div>
+        </div>    
+    </div>   
+        
+    <!-- 聊天室部分 -->
+    <div id="chat-box">
+        <h5>天氣管家</h5>
+        <div class="input-group">
+            <form id="question-form">
+                <input type="text" id="question" placeholder="請輸入問題">
+                <button class="button" type="submit">送出</button>
+            </form>
         </div>
     </div>
 

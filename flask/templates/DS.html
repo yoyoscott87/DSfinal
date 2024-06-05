@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天氣儀表板</title>
+    <link rel="stylesheet" href="DS.CSS">
+</head>
+<body>
+    <div class="container">
+        <h1>天氣預報網</h1>
+        
+        <!-- 室內部分 -->
+        <div class="section indoor-section">
+            <h2>室內</h2>
+            <button class="button" id="ac-button">冷氣</button>
+            <button class="button" id="dehumidifier-button">除濕機</button>
+        </div>
+        
+        <!-- 室外部分 -->
+        <div class="section outdoor-section">
+            <h2>室外</h2>
+            <div class="input-group">
+                <input type="text" id="city-input" placeholder="輸入城市名稱">
+                <button class="button" id="search-button">查詢</button>
+            </div>
+            <div class="weather-info">
+                <h3 id="city-name"></h3>
+                <div id="current-weather">
+                    <p>當前溫度: <span id="temperature"></span>°C</p>
+                    <p>當前濕度: <span id="humidity"></span>%</p>
+                </div>
+                <p>空氣品質: <span id="air-quality"></span></p>
+                <div class="weather-charts">
+                    <h3 class="left">天氣預報圖</h3>
+                    <div id="openweathermap-widget-11" class="center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/d3.min.js'></script>
+    <script src="DS.Js"></script>
+</body>
+</html>

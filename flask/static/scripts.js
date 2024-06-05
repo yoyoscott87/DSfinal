@@ -155,8 +155,9 @@ $(document).ready(function() {
             url: '/ask',
             data: {question: question},
             success: function(response) {
-                $('#chat-box').append('<p><strong>你:</strong> ' + question + '</p>');
-                $('#chat-box').append('<p><strong>機器人:</strong> ' + response.answer + '</p>');
+                $('#chat-box').append('<p style="font-size: 20px;"><strong>你:</strong> ' + question + '</p>');
+                $('#chat-box').append('<p style="font-size: 20px;"><strong>管家:</strong> ' + response.answer + '</p>');
+
             }
         });
     });

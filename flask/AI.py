@@ -11,27 +11,21 @@ app = Flask(__name__)
 
 # 設置Google Sheets API認證
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-credentials = ServiceAccountCredentials.from_json_keyfile_name('flask\sincere-venture-419101-185a586d9858.json', scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_name('flask/sincere-venture-419101-185a586d9858.json', scope)
 client = gspread.authorize(credentials)
-sheet = client.open('test').sheet1
+sheet = client.open('weather').sheet1
+sheet2 = client.open('Home appliances').sheet1
 weights = {'so2': 0.1, 'no2': 0.15, 'pm10': 0.2, 'pm2_5': 0.25, 'o3': 0.15, 'co': 0.15}
 # 獲取OpenWeather API密鑰
 api_key = os.getenv("API_KEY")
 
 # 讀取經緯度數據
-file_path = 'flask\經緯度參考.txt'
+file_path = 'flask/經緯度參考.txt'
 #辦公室
 authorization_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4YWM0MDEzODIwNDU0MDE0ODdjNzIwZTc2ZDBmYzdjYSIsImlhdCI6MTY5ODgwNzExNSwiZXhwIjoyMDE0MTY3MTE1fQ.7KaCwPUcjAr_zne04qili2fwQO1QoWTPzsmV1v_LLIc"
 api_endpoint_tem = "http://211.21.113.190:8155/api/states/sensor.ban_gong_shi_wen_shi_du_temperature"
 api_endpoint_hum = "http://211.21.113.190:8155/api/states/sensor.ban_gong_shi_wen_shi_du_humidity"
 headers = {"Authorization": "Bearer " + authorization_token}
-
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 
 def kelvin_to_celsius(kelvin):
     return kelvin - 273.15
@@ -59,7 +53,7 @@ def get_air_by_coordinates(api_key, lat, lon):
     return data
 
 def turn_14_on():
-    url = 'http://211.21.113.190:8155/api/webhook/-lkvcCfPU2wOmNLvhDjrEKpkb'
+    url = 'http://211.21.113.190:8155/api/webhook/-TqF-jZh-M8QqFBEnfgXEAxY7'
     headers = {
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4YWM0MDEzODIwNDU0MDE0ODdjNzIwZTc2ZDBmYzdjYSIsImlhdCI6MTY5ODgwNzExNSwiZXhwIjoyMDE0MTY3MTE1fQ.7KaCwPUcjAr_zne04qili2fwQO1QoWTPzsmV1v_LLIc'
     }
@@ -68,7 +62,7 @@ def turn_14_on():
     return response.text
 
 def turn_14_off():
-    url = 'http://211.21.113.190:8155/api/webhook/-jfyKgpRXg6fgI9IXNIy0GNSn'
+    url = 'http://211.21.113.190:8155/api/webhook/--gONieqwhFofJ_6WjVAqxZtg'
     headers = {
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4YWM0MDEzODIwNDU0MDE0ODdjNzIwZTc2ZDBmYzdjYSIsImlhdCI6MTY5ODgwNzExNSwiZXhwIjoyMDE0MTY3MTE1fQ.7KaCwPUcjAr_zne04qili2fwQO1QoWTPzsmV1v_LLIc'
     }
@@ -90,6 +84,14 @@ def log_to_google_sheet(data):
         print("成功記錄到 Google Sheets")
     except Exception as e:
         print(f"記錄到 Google Sheets 時出錯: {e}")
+
+def log_to_google_sheet2(data):
+    try:
+        # 追加一行到 Google Sheets
+        sheet2.append_row(data)
+        print("成功記錄到 Google Sheets")
+    except Exception as e:
+        print(f"記錄到 Google Sheets 時出錯: {e}")        
 
 
 def get_air_quality_index(component, value):
@@ -172,19 +174,19 @@ def map_score_to_level(score):
     else:
         return "差"
 
-def air_control(air_quality_level):
-    if air_quality_level == "優秀"or air_quality_level == "良好":
-        response_text_on = turn_14_on()  # 開啟空氣清新機
-        print("空氣品質良好，" + response_text_on)
-    elif air_quality_level == "一般" or air_quality_level == "差":
-        response_text_off = turn_14_off()  # 關閉空氣清新機
-        print("空氣品質一般，" + response_text_off)
-    else:
+def air_control(air_quality_level): 
+    if air_quality_level == "優秀" or air_quality_level == "良好": 
+        response_text_on = turn_14_on()  # 開啟空氣清新機 
+        print("空氣品質良好，" + response_text_on) 
+    elif air_quality_level == "一般" or air_quality_level == "差": 
+        response_text_off = turn_14_off()  # 關閉空氣清新機 
+        print("空氣品質一般，" + response_text_off) 
+    else: 
         print("未知空氣品質等級")
 
 def get_weather(api_key, latitude, longitude):
     try:
-        weather_data = get_weather_data(api_key, latitude, longitude)  # 假設這個函數是存在的，並且根據 API 提供天氣資料
+        weather_data = get_weather_data(api_key, latitude, longitude)  
         temperature = kelvin_to_celsius(weather_data["main"]["temp"])
         humidity = weather_data["main"]["humidity"]
         weather_description = weather_data["weather"][0]["description"]
@@ -206,11 +208,11 @@ def get_weather(api_key, latitude, longitude):
         print(f"空氣品質:{air_quality_level}")
 
         log_data = [
-            time.strftime("%Y-%m-%d %H:%M:%S"),  # 当前时间
-            weather_data['name'],  # 地點
-            round(temperature, 2),  # 溫度
-            humidity,  # 濕度
-            air_quality_level  # 空氣品質
+            time.strftime("%Y-%m-%d %H:%M"),  
+            weather_data['name'],  
+            round(temperature, 2), 
+            humidity, 
+            air_quality_level 
         ]
         log_to_google_sheet(log_data)
 
@@ -246,6 +248,9 @@ def weather():
                 'humidity': weather_data["humidity"],
                 'air': weather_data["air"]
             }
+
+            air_control(weather_data["air"])
+                
             return jsonify(locweather_data)
         else:
             return jsonify({'error': 'Failed to get weather data'})
@@ -255,16 +260,17 @@ def weather():
 
 # 構建模型的輸入
 data = sheet.get_all_records()
+data2 = sheet2.get_all_records()
 prompt = ""
-prompt += f"在Osaka的空氣品質，時間2024-05-25 12:54，是什麼水準？"
-prompt += f"Osaka在資料中被記錄了幾次?2次"
-prompt += f"Toyko的最高溫出現在甚麼時候?23.68(°C)在時間2024-05-19 10:54:12"
-
 for row in data:
-        prompt += f"在{row['時間']}的{row['地點']}溫度是{row['溫度(°C)']}，濕度是{row['濕度']}，空氣品質是{row['空氣品質']}，冷氣的狀態是{row['冷氣狀況(12燈)']}，除濕機的狀態是{row['除濕機狀況(16燈)']}"
+    prompt += f"時間是{row['時間']}地點為{row['地點']}的氣溫是{row['氣溫']}濕度是{row['濕度']}，\n；"
+for row in data2:
+    prompt += f"時間是{row['時間']}在{row['地點']}的氣溫是{row['氣溫']}濕度是{row['濕度']}冷氣狀態是{row['冷氣狀態']}除濕機狀態是{row['除濕機狀態']}，\n；"
 
 
-
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 def get_tem():
     try:
@@ -356,7 +362,7 @@ def auto_control():
         air_conditioner_status = control_air(temperature)
     if humidity is not None:
         dehumidifier_status = control_hum(humidity)
-    
+
     log_data = [
         time.strftime("%Y-%m-%d %H:%M:%S"),  # 当前时间
         "辦公室",  
@@ -365,8 +371,7 @@ def auto_control():
         air_conditioner_status,  # 冷气状态
         dehumidifier_status  # 除湿机状态
     ]
-    log_to_google_sheet(log_data)
-
+    log_to_google_sheet2(log_data)
 
     return jsonify({
         'status': 'success',
@@ -380,6 +385,9 @@ def auto_control():
 def toggle_air_conditioner():
     try:
         current_status = request.json.get('current_status')
+        temperature = request.json.get('temperature')
+        humidity = request.json.get('humidity')
+        dehumidifier_status = request.json.get('dehumidifier_status')
         device_id = "12"  
 
         # 反转冷气状态
@@ -389,6 +397,18 @@ def toggle_air_conditioner():
         else:
             response_text = control_device("on", device_id)
             new_status = "開啟"
+        
+
+        log_data = [
+            time.strftime("%Y-%m-%d %H:%M:%S"),  # 当前时间
+            "辦公室",
+            None,  # 温度
+            None,  # 湿度
+            new_status,  # 冷气状态
+            None  # 除湿机状态
+        ]
+        log_to_google_sheet2(log_data)
+
 
         return jsonify({
             'status': 'success',
@@ -415,7 +435,15 @@ def toggle_hum():
             response_text = control_device("on", device_id)
             new_status = "開啟"
 
-        print(f"Toggled dehumidifier to: {new_status}")  
+        log_data = [
+            time.strftime("%Y-%m-%d %H:%M:%S"),  # 当前时间
+            "辦公室",
+            None,  # 温度
+            None,  # 湿度
+            None,  # 冷气状态
+            new_status  # 除湿机状态
+        ]
+        log_to_google_sheet2(log_data)
 
         return jsonify({
             'status': 'success',
@@ -463,4 +491,3 @@ def ask():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
